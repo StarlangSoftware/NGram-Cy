@@ -54,6 +54,17 @@ cdef class NGramNode(object):
         """
         return self.__count
 
+    cpdef double getProbability(self):
+        """
+        Gets probability of this node.
+
+        RETURNS
+        -------
+        double
+            probability of this node.
+        """
+        return self.__probability
+
     cpdef int size(self):
         """
         Gets the size of children of this node.
@@ -241,9 +252,9 @@ cdef class NGramNode(object):
             unigram probability of given symbol.
         """
         if w1 in self.__children:
-            return self.__children[w1].__probability
+            return self.__children[w1].getProbability()
         elif self.__unknown is not None:
-            return self.__unknown.__probability
+            return self.__unknown.getProbability()
         else:
             return self.__probabilityOfUnseen
 

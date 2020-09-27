@@ -10,6 +10,7 @@ cdef class NGramNode(object):
     cdef NGramNode __unknown
 
     cpdef int getCount(self)
+    cpdef double getProbability(self)
     cpdef int size(self)
     cpdef int maximumOccurence(self, int height)
     cpdef double childSum(self)

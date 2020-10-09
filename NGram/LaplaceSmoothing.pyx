@@ -1,10 +1,7 @@
 from NGram.NGram cimport NGram
-from NGram.SimpleSmoothing cimport SimpleSmoothing
 
 
 cdef class LaplaceSmoothing(SimpleSmoothing):
-
-    cdef double __delta
 
     def __init__(self, delta=1.0):
         self.__delta = delta

@@ -5,7 +5,7 @@ setup(
     ext_modules=cythonize(["NGram/*.pyx"],
                           compiler_directives={'language_level': "3"}),
     name='NlpToolkit-NGram-Cy',
-    version='1.0.1',
+    version='1.0.2',
     packages=['NGram'],
     package_data={'NGram': ['*.pxd', '*.pyx', '*.c']},
     url='https://github.com/olcaytaner/NGram-Cy',

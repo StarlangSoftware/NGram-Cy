@@ -10,6 +10,9 @@ NGram/InterpolatedSmoothing.pyx
 NGram/LaplaceSmoothing.c
 NGram/LaplaceSmoothing.pxd
 NGram/LaplaceSmoothing.pyx
+NGram/MultipleFile.c
+NGram/MultipleFile.pxd
+NGram/MultipleFile.pyx
 NGram/NGram.c
 NGram/NGram.pxd
 NGram/NGram.pyx

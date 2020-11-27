@@ -25,4 +25,5 @@ cdef class NGramNode(object):
     cpdef replaceUnknownWords(self, set dictionary)
     cpdef int getCountForListItem(self, list s, int index)
     cpdef object generateNextString(self, list s, int index)
+    cpdef prune(self, double threshold, int N)
     cpdef saveAsText(self, bint isRootNode, object outputFile, int level)

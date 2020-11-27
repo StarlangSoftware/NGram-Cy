@@ -560,6 +560,10 @@ cdef class NGram:
         self.rootNode.setAdjustedProbability(countsOfCounts, height, self.vocabularySize() + 1, pZero)
         self.__probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
 
+    cpdef prune(self, double threshold):
+        if threshold > 0.0 and threshold <= 1.0:
+            self.rootNode.prune(threshold, self.__N - 1)
+
     cpdef saveAsText(self, str fileName):
         """
         Save this NGram to a text file.

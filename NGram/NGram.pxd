@@ -37,4 +37,5 @@ cdef class NGram:
     cpdef __updateCountsOfCounts(self, list countsOfCounts, int height)
     cpdef list calculateCountsOfCounts(self, int height)
     cpdef setAdjustedProbability(self, list countsOfCounts, int height, double pZero)
+    cpdef prune(self, double threshold)
     cpdef saveAsText(self, str fileName)

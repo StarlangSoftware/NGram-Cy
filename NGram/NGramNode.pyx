@@ -431,6 +431,20 @@ cdef class NGramNode(object):
             return self.__children[s[index]].generateNextString(s, index + 1)
         return None
 
+    cpdef prune(self, double threshold, int N):
+        cdef list toBeDeleted
+        cdef NGramNode node
+        if N == 0:
+            toBeDeleted = []
+            for symbol in self.__children.keys():
+                if self.__children[symbol].getCount() / self.__count < threshold:
+                    toBeDeleted.append(symbol)
+            for symbol in toBeDeleted:
+                self.__children.pop(symbol)
+        else:
+            for node in self.__children.values():
+                node.prune(threshold, N - 1)
+
     cpdef saveAsText(self, bint isRootNode, object outputFile, int level):
         """
         Save this NGramNode to a text file.

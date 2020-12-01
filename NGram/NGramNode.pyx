@@ -433,14 +433,21 @@ cdef class NGramNode(object):
 
     cpdef prune(self, double threshold, int N):
         cdef list toBeDeleted
-        cdef NGramNode node
+        cdef NGramNode node, maxNode
         if N == 0:
+            maxElement = None
+            maxNode = None
             toBeDeleted = []
             for symbol in self.__children.keys():
                 if self.__children[symbol].getCount() / self.__count < threshold:
                     toBeDeleted.append(symbol)
+                if maxElement is None or self.__children[symbol].getCount() > self.__children[maxElement].getCount():
+                    maxElement = symbol
+                    maxNode = self.__children[symbol]
             for symbol in toBeDeleted:
                 self.__children.pop(symbol)
+            if len(self.__children) == 0:
+                self.__children[maxElement] = maxNode
         else:
             for node in self.__children.values():
                 node.prune(threshold, N - 1)

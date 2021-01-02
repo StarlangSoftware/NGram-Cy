@@ -11,7 +11,7 @@ setup(
     url='https://github.com/olcaytaner/NGram-Cy',
     license='',
     author='olcaytaner',
-    author_email='olcaytaner@isikun.edu.tr',
+    author_email='olcay.yildiz@ozyegin.edu.tr',
     description='NGram library',
     install_requires=['NlpToolkit-DataStructure-Cy', 'NlpToolkit-Sampling-Cy']
 )

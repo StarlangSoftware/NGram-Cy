@@ -60,6 +60,15 @@ cdef class NGramNode(object):
                     else:
                         self.__children = {}
 
+    cpdef merge(self, NGramNode toBeMerged):
+        for symbol in self.__children:
+            if symbol in toBeMerged.__children:
+                self.__children[symbol].merge(toBeMerged.__children[symbol])
+        for symbol in toBeMerged.__children:
+            if symbol not in self.__children:
+                self.__children[symbol] = toBeMerged.__children[symbol]
+        self.__count = self.__count + toBeMerged.getCount()
+
     cpdef int getCount(self):
         """
         Gets count of this node.

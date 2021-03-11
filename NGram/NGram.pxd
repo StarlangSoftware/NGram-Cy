@@ -12,6 +12,7 @@ cdef class NGram:
     cdef set __vocabulary
     cdef list __probabilityOfUnseen
 
+    cpdef merge(self, NGram toBeMerged)
     cpdef int getN(self)
     cpdef setN(self, int N)
     cpdef addNGramSentence(self, list symbols, int sentenceCount = *)

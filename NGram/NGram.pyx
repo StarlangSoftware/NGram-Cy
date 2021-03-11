@@ -76,6 +76,12 @@ cdef class NGram:
             self.__vocabulary.add(multipleFile.readLine().strip())
         self.rootNode = NGramNode(True, multipleFile)
 
+    cpdef merge(self, NGram toBeMerged):
+        if self.__N != toBeMerged.getN():
+            return
+        self.__vocabulary.update(toBeMerged.__vocabulary)
+        self.rootNode.merge(toBeMerged.rootNode)
+
     cpdef int getN(self):
         """
         RETURNS

@@ -9,6 +9,7 @@ cdef class NGramNode(object):
     cdef double __probability, __probabilityOfUnseen
     cdef NGramNode __unknown
 
+    cpdef merge(self, NGramNode toBeMerged)
     cpdef int getCount(self)
     cpdef double getProbability(self)
     cpdef int size(self)

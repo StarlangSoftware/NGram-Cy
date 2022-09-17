@@ -6,7 +6,9 @@ cdef class LaplaceSmoothing(SimpleSmoothing):
     def __init__(self, delta=1.0):
         self.__delta = delta
 
-    cpdef setProbabilities(self, object nGram, int level):
+    cpdef setProbabilities(self,
+                           object nGram,
+                           int level):
         """
         Wrapper function to set the N-gram probabilities with laplace smoothing.
 

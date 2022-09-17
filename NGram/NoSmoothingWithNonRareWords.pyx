@@ -16,7 +16,9 @@ cdef class NoSmoothingWithNonRareWords(NoSmoothing):
         """
         self.__probability = probability
 
-    cpdef setProbabilities(self, object nGram, int level):
+    cpdef setProbabilities(self,
+                           object nGram,
+                           int level):
         """
         Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in
         nonrare words.

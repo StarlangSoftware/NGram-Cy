@@ -6,7 +6,7 @@ cdef class NGramNode(object):
     cdef dict __children
     cdef object __symbol
     cdef int __count
-    cdef double __probability, __probabilityOfUnseen
+    cdef double __probability, __probability_of_unseen
     cdef NGramNode __unknown
 
     cpdef merge(self, NGramNode toBeMerged)

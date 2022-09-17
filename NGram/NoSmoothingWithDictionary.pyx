@@ -16,7 +16,9 @@ cdef class NoSmoothingWithDictionary(NoSmoothing):
         """
         self.__dictionary = dictionary
 
-    cpdef setProbabilities(self, object nGram, int level):
+    cpdef setProbabilities(self,
+                           object nGram,
+                           int level):
         """
         Wrapper function to set the N-gram probabilities with no smoothing and replacing unknown words not found in
         set the dictionary.

@@ -6,7 +6,9 @@ import math
 
 cdef class NGram:
 
-    def __init__(self, NorFileName, corpus=None):
+    def __init__(self,
+                 NorFileName,
+                 corpus=None):
         """
         Constructor of NGram class which takes a list corpus and Integer size of ngram as input.
         It adds all sentences of corpus as ngrams.
@@ -19,13 +21,13 @@ cdef class NGram:
         corpus : list
             list of sentences whose ngrams are added.
         """
-        cdef int i, vocabularySize
+        cdef int i, vocabulary_size
         cdef list items
         cdef str line
         if isinstance(NorFileName, int):
             self.__N = NorFileName
             self.__vocabulary = set()
-            self.__probabilityOfUnseen = self.__N * [0.0]
+            self.__probability_of_unseen = self.__N * [0.0]
             self.__lambda1 = 0.0
             self.__lambda2 = 0.0
             self.__interpolated = False
@@ -40,41 +42,41 @@ cdef class NGram:
             self.__N = int(items[0])
             self.__lambda1 = float(items[1])
             self.__lambda2 = float(items[2])
-            self.__probabilityOfUnseen = self.__N * [0.0]
+            self.__probability_of_unseen = self.__N * [0.0]
             self.__interpolated = False
             line = inputFile.readline().strip()
             items = line.split()
             for i in range(len(items)):
-                self.__probabilityOfUnseen[i] = float(items[i])
+                self.__probability_of_unseen[i] = float(items[i])
             self.__vocabulary = set()
-            vocabularySize = int(inputFile.readline().strip())
-            for i in range(vocabularySize):
+            vocabulary_size = int(inputFile.readline().strip())
+            for i in range(vocabulary_size):
                 self.__vocabulary.add(inputFile.readline().strip())
             self.rootNode = NGramNode(True, inputFile)
             inputFile.close()
 
     def initWithMultipleFile(self, *args):
-        cdef MultipleFile multipleFile
-        cdef int i, vocabularySize
+        cdef MultipleFile multiple_file
+        cdef int i, vocabulary_size
         cdef list items
         cdef str line
-        multipleFile = MultipleFile(list(args))
-        line = multipleFile.readLine().strip()
+        multiple_file = MultipleFile(list(args))
+        line = multiple_file.readLine().strip()
         items = line.split()
         self.__N = int(items[0])
         self.__lambda1 = float(items[1])
         self.__lambda2 = float(items[2])
-        self.__probabilityOfUnseen = self.__N * [0.0]
+        self.__probability_of_unseen = self.__N * [0.0]
         self.__interpolated = False
-        line = multipleFile.readLine().strip()
+        line = multiple_file.readLine().strip()
         items = line.split()
         for i in range(len(items)):
-            self.__probabilityOfUnseen[i] = float(items[i])
+            self.__probability_of_unseen[i] = float(items[i])
         self.__vocabulary = set()
-        vocabularySize = int(multipleFile.readLine().strip())
-        for i in range(vocabularySize):
-            self.__vocabulary.add(multipleFile.readLine().strip())
-        self.rootNode = NGramNode(True, multipleFile)
+        vocabulary_size = int(multiple_file.readLine().strip())
+        for i in range(vocabulary_size):
+            self.__vocabulary.add(multiple_file.readLine().strip())
+        self.rootNode = NGramNode(True, multiple_file)
 
     cpdef merge(self, NGram toBeMerged):
         if self.__N != toBeMerged.getN():
@@ -102,7 +104,9 @@ cdef class NGram:
         """
         self.__N = N
 
-    cpdef addNGramSentence(self, list symbols, int sentenceCount = 1):
+    cpdef addNGramSentence(self,
+                           list symbols,
+                           int sentenceCount = 1):
         """
         Adds given sentence to set the vocabulary and create and add ngrams of the sentence to NGramNode the rootNode
 
@@ -174,7 +178,9 @@ cdef class NGram:
             self.__lambda1 = lambda1
             self.__lambda2 = lambda2
 
-    cpdef calculateNGramProbabilitiesTrained(self, list corpus, TrainedSmoothing trainedSmoothing):
+    cpdef calculateNGramProbabilitiesTrained(self,
+                                             list corpus,
+                                             TrainedSmoothing trainedSmoothing):
         """
         Calculates NGram probabilities using given corpus and TrainedSmoothing smoothing method.
 
@@ -197,7 +203,9 @@ cdef class NGram:
         """
         simpleSmoothing.setProbabilitiesGeneral(self)
 
-    cpdef calculateNGramProbabilitiesSimpleLevel(self, SimpleSmoothing simpleSmoothing, int level):
+    cpdef calculateNGramProbabilitiesSimpleLevel(self,
+                                                 SimpleSmoothing simpleSmoothing,
+                                                 int level):
         """
         Calculates NGram probabilities given simple smoothing and level.
 
@@ -220,7 +228,9 @@ cdef class NGram:
         """
         self.rootNode.replaceUnknownWords(dictionary)
 
-    cpdef set constructDictionaryWithNonRareWords(self, int level, double probability):
+    cpdef set constructDictionaryWithNonRareWords(self,
+                                                  int level,
+                                                  double probability):
         """
         Constructs a dictionary of nonrare words with given N-Gram level and probability threshold.
 
@@ -238,14 +248,14 @@ cdef class NGram:
             set of nonrare words.
         """
         cdef set result
-        cdef CounterHashMap wordCounter
+        cdef CounterHashMap word_counter
         cdef double total
         result = set()
-        wordCounter = CounterHashMap()
-        self.rootNode.countWords(wordCounter, level)
-        total = wordCounter.sumOfCounts()
-        for symbol in wordCounter.keys():
-            if wordCounter[symbol] / total > probability:
+        word_counter = CounterHashMap()
+        self.rootNode.countWords(word_counter, level)
+        total = word_counter.sumOfCounts()
+        for symbol in word_counter.keys():
+            if word_counter[symbol] / total > probability:
                 result.add(symbol)
         return result
 
@@ -296,7 +306,8 @@ cdef class NGram:
         count = 0
         for i in range(len(corpus)):
             for j in range(len(corpus[i]) - 1):
-                p = self.getProbability(corpus[i][j], corpus[i][j + 1])
+                p = self.getProbability(corpus[i][j],
+                                        corpus[i][j + 1])
                 total -= math.log(p)
                 count += 1
         return math.exp(total / count)
@@ -322,7 +333,9 @@ cdef class NGram:
         count = 0
         for i in range(len(corpus)):
             for j in range(len(corpus[i]) - 2):
-                p = self.getProbability(corpus[i][j], corpus[i][j + 1], corpus[i][j + 2])
+                p = self.getProbability(corpus[i][j],
+                                        corpus[i][j + 1],
+                                        corpus[i][j + 2])
                 total -= math.log(p)
                 count += 1
         return math.exp(total / count)
@@ -429,7 +442,7 @@ cdef class NGram:
         if probability != -1:
             return probability
         else:
-            return self.__probabilityOfUnseen[1]
+            return self.__probability_of_unseen[1]
 
     cpdef double __getTriGramProbability(self, object w1, object w2, object w3):
         """
@@ -454,7 +467,7 @@ cdef class NGram:
         if probability != -1:
             return probability
         else:
-            return self.__probabilityOfUnseen[2]
+            return self.__probability_of_unseen[2]
 
     cpdef int getCount(self, list symbols):
         """
@@ -472,7 +485,9 @@ cdef class NGram:
         """
         return self.rootNode.getCountForListItem(symbols, 0)
 
-    cpdef setProbabilityWithPseudoCount(self, double pseudoCount, int height):
+    cpdef setProbabilityWithPseudoCount(self,
+                                        double pseudoCount,
+                                        int height):
         """
         Sets probabilities by adding pseudocounts given height and pseudocount.
 
@@ -484,16 +499,16 @@ cdef class NGram:
             height for NGram. if height = 1, If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated
             as Bigram, etc.
         """
-        cdef double vocabularySize
+        cdef double vocabulary_size
         if pseudoCount != 0:
-            vocabularySize = self.vocabularySize() + 1
+            vocabulary_size = self.vocabularySize() + 1
         else:
-            vocabularySize = self.vocabularySize()
-        self.rootNode.setProbabilityWithPseudoCount(pseudoCount, height, vocabularySize)
+            vocabulary_size = self.vocabularySize()
+        self.rootNode.setProbabilityWithPseudoCount(pseudoCount, height, vocabulary_size)
         if pseudoCount != 0:
-            self.__probabilityOfUnseen[height - 1] = 1.0 / vocabularySize
+            self.__probability_of_unseen[height - 1] = 1.0 / vocabulary_size
         else:
-            self.__probabilityOfUnseen[height - 1] = 0.0
+            self.__probability_of_unseen[height - 1] = 0.0
 
     cpdef int __maximumOccurence(self, int height):
         """
@@ -513,7 +528,9 @@ cdef class NGram:
         """
         return self.rootNode.maximumOccurence(height)
 
-    cpdef __updateCountsOfCounts(self, list countsOfCounts, int height):
+    cpdef __updateCountsOfCounts(self,
+                                 list countsOfCounts,
+                                 int height):
         """
         Update counts of counts of N-Grams with given counts of counts and given height.
 
@@ -542,14 +559,17 @@ cdef class NGram:
         list
             counts of counts of NGrams.
         """
-        cdef int maxCount
-        cdef list countsOfCounts
-        maxCount = self.__maximumOccurence(height)
-        countsOfCounts = [0] * (maxCount + 2)
-        self.__updateCountsOfCounts(countsOfCounts, height)
-        return countsOfCounts
+        cdef int max_count
+        cdef list counts_of_counts
+        max_count = self.__maximumOccurence(height)
+        counts_of_counts = [0] * (max_count + 2)
+        self.__updateCountsOfCounts(counts_of_counts, height)
+        return counts_of_counts
 
-    cpdef setAdjustedProbability(self, list countsOfCounts, int height, double pZero):
+    cpdef setAdjustedProbability(self,
+                                 list countsOfCounts,
+                                 int height,
+                                 double pZero):
         """
         Sets probability with given counts of counts and pZero.
 
@@ -564,7 +584,7 @@ cdef class NGram:
             probability of zero.
         """
         self.rootNode.setAdjustedProbability(countsOfCounts, height, self.vocabularySize() + 1, pZero)
-        self.__probabilityOfUnseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
+        self.__probability_of_unseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
 
     cpdef prune(self, double threshold):
         if threshold > 0.0 and threshold <= 1.0:
@@ -581,13 +601,13 @@ cdef class NGram:
         """
         cdef double p
         cdef object symbol
-        outputFile = open(fileName, mode="w", encoding="utf8")
-        outputFile.write(self.__N.__str__() + " " + self.__lambda1.__str__() + " " + self.__lambda2.__str__() + "\n")
-        for p in self.__probabilityOfUnseen:
-            outputFile.write(p.__str__() + " ")
-        outputFile.write("\n")
-        outputFile.write(self.vocabularySize().__str__() + "\n")
+        output_file = open(fileName, mode="w", encoding="utf8")
+        output_file.write(self.__N.__str__() + " " + self.__lambda1.__str__() + " " + self.__lambda2.__str__() + "\n")
+        for p in self.__probability_of_unseen:
+            output_file.write(p.__str__() + " ")
+        output_file.write("\n")
+        output_file.write(self.vocabularySize().__str__() + "\n")
         for symbol in self.__vocabulary:
-            outputFile.write(symbol.__str__() + "\n")
-        self.rootNode.saveAsText(True, outputFile, 0)
-        outputFile.close()
+            output_file.write(symbol.__str__() + "\n")
+        self.rootNode.saveAsText(True, output_file, 0)
+        output_file.close()

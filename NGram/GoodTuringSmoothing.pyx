@@ -76,12 +76,12 @@ cdef class GoodTuringSmoothing(SimpleSmoothing):
             set with this function. If level = 1, N-Gram is treated as UniGram, if level = 2, N-Gram is treated as
             Bigram, etc.
         """
-        cdef list countsOfCounts, N
+        cdef list counts_of_counts, N
         cdef int r
         cdef double total
-        countsOfCounts = nGram.calculateCountsOfCounts(level)
-        N = self.__linearRegressionOnCountsOfCounts(countsOfCounts)
+        counts_of_counts = nGram.calculateCountsOfCounts(level)
+        N = self.__linearRegressionOnCountsOfCounts(counts_of_counts)
         total = 0.0
-        for r in range(1, len(countsOfCounts)):
-            total += countsOfCounts[r] * r
+        for r in range(1, len(counts_of_counts)):
+            total += counts_of_counts[r] * r
         nGram.setAdjustedProbability(N, level, N[1] / total)

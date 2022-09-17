@@ -1,10 +1,15 @@
 cdef class TrainedSmoothing(SimpleSmoothing):
 
-    cpdef learnParameters(self, list corpus, int N):
+    cpdef learnParameters(self,
+                          list corpus,
+                          int N):
         pass
 
-    cpdef double newLowerBound(self, double current, double currentLowerBound,
-                      double currentUpperBound, int numberOfParts):
+    cpdef double newLowerBound(self,
+                               double current,
+                               double currentLowerBound,
+                               double currentUpperBound,
+                               int numberOfParts):
         """
         Calculates new lower bound.
 
@@ -29,8 +34,11 @@ cdef class TrainedSmoothing(SimpleSmoothing):
         else:
             return current / numberOfParts
 
-    cpdef double newUpperBound(self, double current, double currentLowerBound,
-                      double currentUpperBound, int numberOfParts):
+    cpdef double newUpperBound(self,
+                               double current,
+                               double currentLowerBound,
+                               double currentUpperBound,
+                               int numberOfParts):
         """
         Calculates new upper bound.
 
@@ -55,7 +63,9 @@ cdef class TrainedSmoothing(SimpleSmoothing):
         else:
             return current * numberOfParts
 
-    cpdef train(self, list corpus, object nGram):
+    cpdef train(self,
+                list corpus,
+                object nGram):
         """
         Wrapper function to learn parameters of the smoothing method and set the N-gram probabilities.
 

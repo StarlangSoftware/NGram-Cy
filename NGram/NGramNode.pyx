@@ -5,7 +5,9 @@ import random
 
 cdef class NGramNode(object):
 
-    def __init__(self, symbolOrIsRootNode, inputFile=None):
+    def __init__(self,
+                 symbolOrIsRootNode,
+                 inputFile=None):
         """
         Constructor of NGramNode
 
@@ -16,14 +18,14 @@ cdef class NGramNode(object):
         """
         cdef str line
         cdef list items
-        cdef int i, numberOfChildren
-        cdef NGramNode childNode
+        cdef int i, number_of_children
+        cdef NGramNode child_node
         self.__unknown = None
         if not isinstance(symbolOrIsRootNode, bool):
             self.__symbol = symbolOrIsRootNode
             self.__count = 0
             self.__probability = 0.0
-            self.__probabilityOfUnseen = 0.0
+            self.__probability_of_unseen = 0.0
             self.__children = {}
         else:
             if isinstance(symbolOrIsRootNode, bool) and inputFile is not None:
@@ -34,13 +36,13 @@ cdef class NGramNode(object):
                     items = line.split()
                     self.__count = int(items[0])
                     self.__probability = float(items[1])
-                    self.__probabilityOfUnseen = float(items[2])
-                    numberOfChildren = int(items[3])
-                    if numberOfChildren > 0:
+                    self.__probability_of_unseen = float(items[2])
+                    number_of_children = int(items[3])
+                    if number_of_children > 0:
                         self.__children = {}
-                        for i in range(numberOfChildren):
-                            childNode = NGramNode(False, inputFile)
-                            self.__children[childNode.__symbol] = childNode
+                        for i in range(number_of_children):
+                            child_node = NGramNode(False, inputFile)
+                            self.__children[child_node.__symbol] = child_node
                     else:
                         self.__children = {}
                 elif isinstance(inputFile, MultipleFile):
@@ -50,13 +52,13 @@ cdef class NGramNode(object):
                     items = line.split()
                     self.__count = int(items[0])
                     self.__probability = float(items[1])
-                    self.__probabilityOfUnseen = float(items[2])
-                    numberOfChildren = int(items[3])
-                    if numberOfChildren > 0:
+                    self.__probability_of_unseen = float(items[2])
+                    number_of_children = int(items[3])
+                    if number_of_children > 0:
                         self.__children = {}
-                        for i in range(numberOfChildren):
-                            childNode = NGramNode(False, inputFile)
-                            self.__children[childNode.__symbol] = childNode
+                        for i in range(number_of_children):
+                            child_node = NGramNode(False, inputFile)
+                            self.__children[child_node.__symbol] = child_node
                     else:
                         self.__children = {}
 
@@ -145,7 +147,9 @@ cdef class NGramNode(object):
             total += self.__unknown.__count
         return total
 
-    cpdef updateCountsOfCounts(self, list countsOfCounts, int height):
+    cpdef updateCountsOfCounts(self,
+                               list countsOfCounts,
+                               int height):
         """
         Traverses nodes and updates counts of counts for each node.
 
@@ -164,7 +168,10 @@ cdef class NGramNode(object):
             for child in self.__children.values():
                 child.updateCountsOfCounts(countsOfCounts, height - 1)
 
-    cpdef setProbabilityWithPseudoCount(self, double pseudoCount, int height, double vocabularySize):
+    cpdef setProbabilityWithPseudoCount(self,
+                                        double pseudoCount,
+                                        int height,
+                                        double vocabularySize):
         """
         Sets probabilities by traversing nodes and adding pseudocount for each NGram.
 
@@ -186,12 +193,16 @@ cdef class NGramNode(object):
                 child.__probability = (child.__count + pseudoCount) / total
             if self.__unknown is not None:
                 self.__unknown.__probability = (self.__unknown.__count + pseudoCount) / total
-            self.__probabilityOfUnseen = pseudoCount / total
+            self.__probability_of_unseen = pseudoCount / total
         else:
             for child in self.__children.values():
                 child.setProbabilityWithPseudoCount(pseudoCount, height - 1, vocabularySize)
 
-    cpdef setAdjustedProbability(self, list N, int height, double vocabularySize, double pZero):
+    cpdef setAdjustedProbability(self,
+                                 list N,
+                                 int height,
+                                 double vocabularySize,
+                                 double pZero):
         """
         Sets adjusted probabilities with counts of counts of NGrams.
         For count < 5, count is considered as ((r + 1) * N[r + 1]) / N[r]), otherwise, count is considered as it is.
@@ -229,12 +240,16 @@ cdef class NGramNode(object):
                     child.__probability = (1 - pZero) * (newR / total)
                 else:
                     child.__probability = (1 - pZero) * (r / total)
-            self.__probabilityOfUnseen = pZero / (vocabularySize - len(self.__children))
+            self.__probability_of_unseen = pZero / (vocabularySize - len(self.__children))
         else:
             for child in self.__children.values():
                 child.setAdjustedProbability(N, height - 1, vocabularySize, pZero)
 
-    cpdef addNGram(self, list s, int index, int height, int sentenceCount = 1):
+    cpdef addNGram(self,
+                   list s,
+                   int index,
+                   int height,
+                   int sentenceCount = 1):
         """
         Adds NGram given as array of symbols to the node as a child.
 
@@ -282,9 +297,11 @@ cdef class NGramNode(object):
         elif self.__unknown is not None:
             return self.__unknown.getProbability()
         else:
-            return self.__probabilityOfUnseen
+            return self.__probability_of_unseen
 
-    cpdef double getBiGramProbability(self, object w1, object w2):
+    cpdef double getBiGramProbability(self,
+                                      object w1,
+                                      object w2):
         """
         Gets bigram probability of given symbols w1 and w2
 
@@ -309,7 +326,10 @@ cdef class NGramNode(object):
         else:
             return -1
 
-    cpdef double getTriGramProbability(self, object w1, object w2, object w3):
+    cpdef double getTriGramProbability(self,
+                                       object w1,
+                                       object w2,
+                                       object w3):
         """
         Gets trigram probability of given symbols w1, w2 and w3.
 
@@ -336,7 +356,9 @@ cdef class NGramNode(object):
         else:
             return -1
 
-    cpdef countWords(self, CounterHashMap wordCounter, int height):
+    cpdef countWords(self,
+                     CounterHashMap wordCounter,
+                     int height):
         """
         Counts words recursively given height and wordCounter.
 
@@ -366,19 +388,19 @@ cdef class NGramNode(object):
         dictionary : set
             dictionary of known words.
         """
-        cdef list childList
+        cdef list child_list
         cdef object symbol
         cdef NGramNode child
         cdef int total
-        childList = []
+        child_list = []
         for symbol in self.__children.keys():
             if symbol not in dictionary:
-                childList.append(self.__children[symbol])
-        if len(childList) > 0:
+                child_list.append(self.__children[symbol])
+        if len(child_list) > 0:
             self.__unknown = NGramNode("")
             self.__unknown.__children = {}
             total = 0
-            for child in childList:
+            for child in child_list:
                 self.__unknown.__children.update(child.__children)
                 total += child.__count
                 del self.__children[child.symbol]
@@ -387,7 +409,9 @@ cdef class NGramNode(object):
         for child in self.__children.values():
             child.replaceUnknownWords(dictionary)
 
-    cpdef int getCountForListItem(self, list s, int index):
+    cpdef int getCountForListItem(self,
+                                  list s,
+                                  int index):
         """
         Gets count of symbol given array of symbols and index of symbol in this array.
 
@@ -411,7 +435,9 @@ cdef class NGramNode(object):
         else:
             return self.getCount()
 
-    cpdef object generateNextString(self, list s, int index):
+    cpdef object generateNextString(self,
+                                    list s,
+                                    int index):
         """
         Generates next string for given list of symbol and index
         PARAMETERS
@@ -440,28 +466,33 @@ cdef class NGramNode(object):
             return self.__children[s[index]].generateNextString(s, index + 1)
         return None
 
-    cpdef prune(self, double threshold, int N):
-        cdef list toBeDeleted
-        cdef NGramNode node, maxNode
+    cpdef prune(self,
+                double threshold,
+                int N):
+        cdef list to_be_deleted
+        cdef NGramNode node, max_node
         if N == 0:
-            maxElement = None
-            maxNode = None
-            toBeDeleted = []
+            max_element = None
+            max_node = None
+            to_be_deleted = []
             for symbol in self.__children.keys():
                 if self.__children[symbol].getCount() / self.__count < threshold:
-                    toBeDeleted.append(symbol)
-                if maxElement is None or self.__children[symbol].getCount() > self.__children[maxElement].getCount():
-                    maxElement = symbol
-                    maxNode = self.__children[symbol]
-            for symbol in toBeDeleted:
+                    to_be_deleted.append(symbol)
+                if max_element is None or self.__children[symbol].getCount() > self.__children[max_element].getCount():
+                    max_element = symbol
+                    max_node = self.__children[symbol]
+            for symbol in to_be_deleted:
                 self.__children.pop(symbol)
             if len(self.__children) == 0:
-                self.__children[maxElement] = maxNode
+                self.__children[max_element] = max_node
         else:
             for node in self.__children.values():
                 node.prune(threshold, N - 1)
 
-    cpdef saveAsText(self, bint isRootNode, object outputFile, int level):
+    cpdef saveAsText(self,
+                     bint isRootNode,
+                     object outputFile,
+                     int level):
         """
         Save this NGramNode to a text file.
 
@@ -484,9 +515,9 @@ cdef class NGramNode(object):
             outputFile.write("\t")
         if len(self.__children) > 0:
             outputFile.write(self.__count.__str__() + " " + self.__probability.__str__() + " " +
-                             self.__probabilityOfUnseen.__str__() + " " + self.size().__str__() + "\n")
+                             self.__probability_of_unseen.__str__() + " " + self.size().__str__() + "\n")
             for child in self.__children.values():
                 child.saveAsText(False, outputFile, level + 1)
         else:
             outputFile.write(self.__count.__str__() + " " + self.__probability.__str__() + " " +
-                             self.__probabilityOfUnseen.__str__() + " 0\n")
+                             self.__probability_of_unseen.__str__() + " 0\n")

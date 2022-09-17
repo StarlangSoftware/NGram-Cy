@@ -10,7 +10,7 @@ cdef class NGram:
     cdef double __lambda1, __lambda2
     cdef bint __interpolated
     cdef set __vocabulary
-    cdef list __probabilityOfUnseen
+    cdef list __probability_of_unseen
 
     cpdef merge(self, NGram toBeMerged)
     cpdef int getN(self)

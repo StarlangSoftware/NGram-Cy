@@ -79,6 +79,11 @@ cdef class NGram:
         self.rootNode = NGramNode(True, multiple_file)
 
     cpdef merge(self, NGram toBeMerged):
+        """
+        Merges current NGram with the given NGram. If N of the two NGram's are not same, it does not
+        merge. Merges first the vocabulary, then the NGram trees.
+        :param toBeMerged: NGram to be merged with.
+        """
         if self.__N != toBeMerged.getN():
             return
         self.__vocabulary.update(toBeMerged.__vocabulary)
@@ -587,6 +592,11 @@ cdef class NGram:
         self.__probability_of_unseen[height - 1] = 1.0 / (self.vocabularySize() + 1)
 
     cpdef prune(self, double threshold):
+        """
+        Prunes NGram according to the given threshold. All nodes having a probability less than the threshold will be
+        pruned.
+        :param threshold: Probability threshold used for pruning.
+        """
         if threshold > 0.0 and threshold <= 1.0:
             self.rootNode.prune(threshold, self.__N - 1)
 

@@ -63,6 +63,10 @@ cdef class NGramNode(object):
                         self.__children = {}
 
     cpdef merge(self, NGramNode toBeMerged):
+        """
+        Merges this NGramNode with the corresponding NGramNode in another NGram.
+        :param toBeMerged: Parallel NGramNode of the parallel NGram tree.
+        """
         for symbol in self.__children:
             if symbol in toBeMerged.__children:
                 self.__children[symbol].merge(toBeMerged.__children[symbol])
@@ -469,6 +473,12 @@ cdef class NGramNode(object):
     cpdef prune(self,
                 double threshold,
                 int N):
+        """
+        Prunes the NGramNode according to the given threshold. Removes the child(ren) whose probability is less than
+        the threshold.
+        :param threshold: Threshold for pruning the NGram tree.
+        :param N: N in N-Gram.
+        """
         cdef list to_be_deleted
         cdef NGramNode node, max_node
         if N == 0:

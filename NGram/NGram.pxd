@@ -12,6 +12,8 @@ cdef class NGram:
     cdef set __vocabulary
     cdef list __probability_of_unseen
 
+    cpdef constructor1(self, int N, list corpus)
+    cpdef constructor2(self, str fileName)
     cpdef merge(self, NGram toBeMerged)
     cpdef int getN(self)
     cpdef setN(self, int N)

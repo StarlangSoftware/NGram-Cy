@@ -5,6 +5,55 @@ import random
 
 cdef class NGramNode(object):
 
+    cpdef constructor1(self, object symbol):
+        self.__symbol = symbol
+        self.__count = 0
+        self.__probability = 0.0
+        self.__probability_of_unseen = 0.0
+        self.__children = {}
+
+    cpdef constructor2(self, bint isRootNode, object inputFile):
+        cdef str line
+        cdef list items
+        cdef int i, number_of_children
+        cdef NGramNode child_node
+        if not isRootNode:
+            self.__symbol = inputFile.readline().strip()
+        line = inputFile.readline().strip()
+        items = line.split()
+        self.__count = int(items[0])
+        self.__probability = float(items[1])
+        self.__probability_of_unseen = float(items[2])
+        number_of_children = int(items[3])
+        if number_of_children > 0:
+            self.__children = {}
+            for i in range(number_of_children):
+                child_node = NGramNode(False, inputFile)
+                self.__children[child_node.__symbol] = child_node
+        else:
+            self.__children = {}
+
+    cpdef constructor3(self, bint isRootNode, MultipleFile inputFile):
+        cdef str line
+        cdef list items
+        cdef int i, number_of_children
+        cdef NGramNode child_node
+        if not isRootNode:
+            self.__symbol = inputFile.readLine().strip()
+        line = inputFile.readLine().strip()
+        items = line.split()
+        self.__count = int(items[0])
+        self.__probability = float(items[1])
+        self.__probability_of_unseen = float(items[2])
+        number_of_children = int(items[3])
+        if number_of_children > 0:
+            self.__children = {}
+            for i in range(number_of_children):
+                child_node = NGramNode(False, inputFile)
+                self.__children[child_node.__symbol] = child_node
+        else:
+            self.__children = {}
+
     def __init__(self,
                  symbolOrIsRootNode,
                  inputFile=None):
@@ -16,51 +65,15 @@ cdef class NGramNode(object):
         symbolOrIsRootNode
             symbol to be kept in this node.
         """
-        cdef str line
-        cdef list items
-        cdef int i, number_of_children
-        cdef NGramNode child_node
         self.__unknown = None
         if not isinstance(symbolOrIsRootNode, bool):
-            self.__symbol = symbolOrIsRootNode
-            self.__count = 0
-            self.__probability = 0.0
-            self.__probability_of_unseen = 0.0
-            self.__children = {}
+            self.constructor1(symbolOrIsRootNode)
         else:
             if isinstance(symbolOrIsRootNode, bool) and inputFile is not None:
                 if isinstance(inputFile, TextIOWrapper):
-                    if not symbolOrIsRootNode:
-                        self.__symbol = inputFile.readline().strip()
-                    line = inputFile.readline().strip()
-                    items = line.split()
-                    self.__count = int(items[0])
-                    self.__probability = float(items[1])
-                    self.__probability_of_unseen = float(items[2])
-                    number_of_children = int(items[3])
-                    if number_of_children > 0:
-                        self.__children = {}
-                        for i in range(number_of_children):
-                            child_node = NGramNode(False, inputFile)
-                            self.__children[child_node.__symbol] = child_node
-                    else:
-                        self.__children = {}
+                    self.constructor2(symbolOrIsRootNode, inputFile)
                 elif isinstance(inputFile, MultipleFile):
-                    if not symbolOrIsRootNode:
-                        self.__symbol = inputFile.readLine().strip()
-                    line = inputFile.readLine().strip()
-                    items = line.split()
-                    self.__count = int(items[0])
-                    self.__probability = float(items[1])
-                    self.__probability_of_unseen = float(items[2])
-                    number_of_children = int(items[3])
-                    if number_of_children > 0:
-                        self.__children = {}
-                        for i in range(number_of_children):
-                            child_node = NGramNode(False, inputFile)
-                            self.__children[child_node.__symbol] = child_node
-                    else:
-                        self.__children = {}
+                    self.constructor3(symbolOrIsRootNode, inputFile)
 
     cpdef merge(self, NGramNode toBeMerged):
         """

@@ -1,5 +1,5 @@
 from DataStructure.CounterHashMap cimport CounterHashMap
-
+from NGram.MultipleFile cimport MultipleFile
 
 cdef class NGramNode(object):
 
@@ -9,6 +9,9 @@ cdef class NGramNode(object):
     cdef double __probability, __probability_of_unseen
     cdef NGramNode __unknown
 
+    cpdef constructor1(self, object symbol)
+    cpdef constructor2(self, bint isRootNode, object inputFile)
+    cpdef constructor3(self, bint isRootNode, MultipleFile inputFile)
     cpdef merge(self, NGramNode toBeMerged)
     cpdef int getCount(self)
     cpdef double getProbability(self)

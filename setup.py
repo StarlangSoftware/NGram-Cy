@@ -8,8 +8,8 @@ from Cython.Build import cythonize
 setup(
     ext_modules=cythonize(["NGram/*.pyx"],
                           compiler_directives={'language_level': "3"}),
-    name='NlpToolkit-NGram-Cy',
-    version='1.0.11',
+    name='nlptoolkit-ngram-cy',
+    version='1.0.12',
     packages=['NGram'],
     package_data={'NGram': ['*.pxd', '*.pyx', '*.c', '*.py']},
     url='https://github.com/StarlangSoftware/NGram-Cy',
